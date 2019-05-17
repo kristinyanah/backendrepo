@@ -1,0 +1,12 @@
+[parameters]
+DATASET='human'
+radius=2
+ngram=3
+dim=10
+layer_gnn=3
+window=5
+layer_cnn=3
+lr=1e-4
+lr_decay=0.5
+decay_interval=10
+iteration=100
