@@ -8,6 +8,15 @@ import numpy as np
 from rdkit import Chem
 
 
+
+def load_dictionary(file_name):
+    with open(file_name, 'rb') as f:
+        d = pickle.load(f)
+    dictionary = defaultdict(lambda: len(d))
+    dictionary.update(d)
+    return dictionary
+
+
 def create_atoms(atom_dict, mol):
     # NOTE: my error handling
     try:

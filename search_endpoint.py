@@ -16,13 +16,13 @@ from rdkit import Chem
 
 import traceback
 
-from models.cnn_gnn.demo.demo import (
-	CompoundProteinInteractionPrediction, Predictor, load_dictionary
-)
 from models.cnn_gnn.code.preprocess_data import (
-	split_sequence,
+	split_sequence, load_dictionary,
 	create_adjacency, create_atoms,
 	create_fingerprints, create_ijbonddict,	
+)
+from models.cnn_gnn.code.predictor import ( 
+	Predictor, CompoundProteinInteractionPrediction
 )
 
 def parseParams(path, param):

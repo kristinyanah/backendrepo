@@ -55,7 +55,7 @@ class CompoundProteinInteractionPrediction(nn.Module):
 
         """Compound vector with GNN."""
         x_fingerprints = self.embed_fingerprint(fingerprints)
-        x_compound = self.gnn(x_fingerprints, adjacency)
+        x_compound = self.gnn(x_fingerprints, adjacency, layer_gnn)
 
         """Protein vector with attention-CNN."""
         x_words = self.embed_word(words)
@@ -141,9 +141,9 @@ class Tester(object):
         for i, f in enumerate(fpr):
             # value based on looking at initial ROC curve
             if f > 0.10:
-                print("Epoch is {}".format(iter))
-                print("Type is: '{}'".format(type))
-                print("fpr is {} at index {}, now bigger than 0.10".format(f, i))
+                print "Epoch is {}".format(iter)
+                print "Type is: '{}'".format(type)
+                print "fpr is {} at index {}, now bigger than 0.10".format(f, i)
                 out.write("\nEpoch: {}\n".format(iter))
                 out.write("\nType: {}\n\n".format(type))
                 fpr_thresh = zip(fpr[0:i+60], thresholds[0:i+60])
@@ -155,8 +155,8 @@ class Tester(object):
 
 
                 thresh = thresholds[i]
-                print("thresh is {}".format(thresh))
-                print("thresholds in that area are {}\n\n".format(thresholds[0:i+60]))
+                print "thresh is {}".format(thresh)
+                print "thresholds in that area are {}\n\n".format(thresholds[0:i+60])
                 # stop looping once we get to the right FPR point
                 break
         out.close()
@@ -366,13 +366,13 @@ if __name__ == "__main__":
     if not saved_model:
         # if we're training but also supply a test set, i.e. want all of OG data set used for training and validation
         if testset:
-            print("Testset supplied, {} will only be used for training and validation".format(dir_input))
+            print "Testset supplied, {} will only be used for training and validation".format(dir_input)
             # get the randomized data sets for just training and dev
             dataset_train, dataset_dev, _ = create_dataset(dir_input, training_ratio=0.90,
                                                                       validation_ratio=0.10, test_ratio=0.0)
         # if we're training and did not supply a test set
         else:
-            print("No testset supplied, will use {} dataset for training, validation, and dev".format(dir_input))
+            print "No testset supplied, will use {} dataset for training, validation, and dev".format(dir_input)
             # get the randomized data sets w default proportions
             dataset_train, dataset_dev, dataset_test = create_dataset(dir_input)
 
@@ -393,14 +393,14 @@ if __name__ == "__main__":
     model = CompoundProteinInteractionPrediction().to(device)
     # NOTE: if loading something trained on GPU, need to load it special on CPU
     if saved_model:
-        print("Loading saved model {}; no training will take place, only testing".format(saved_model))
+        print "Loading saved model {}; no training will take place, only testing".format(saved_model)
         # TODO: remove --specific to saving on GPU and loading on CPU
 
         model.load_state_dict(torch.load(saved_model, map_location=device))
         # not going to do training, so setup for test (sets 'training' attribute to false)
         model.eval()
     else:
-        print("Will perform training")
+        print "Will perform training"
         trainer = Trainer(model)
 
     tester = Tester(model)
@@ -425,11 +425,11 @@ if __name__ == "__main__":
     # if we're training
     if not saved_model:
         # start to write output result file
-        print("Initializing training output file")
+        print "Initializing training output file"
         with open(file_result, 'w') as f:
             f.write('Epoch\tTime(sec)\tLoss_train\tAUC_dev\t'
                     'AUC_test\tPrecision_test\tRecall_test\n')
-        print("Beginning training, w/intermittent testing")
+        print "Beginning training, w/intermittent testing"
 
         for epoch in range(iteration):
             if (epoch+1) % decay_interval == 0:

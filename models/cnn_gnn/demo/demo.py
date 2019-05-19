@@ -57,17 +57,8 @@ def split_sequence(sequence, ngram):
 
 
 class CompoundProteinInteractionPrediction(nn.Module):
-    def __init__(self, n_fingerprint=None, dim=None, layer_gnn=None, window=None,
-     layer_cnn=None, n_word=None):
+    def __init__(self):
         super(CompoundProteinInteractionPrediction, self).__init__()
-        self.n_fingerprint = n_fingerprint
-        self.dim = dim
-        self.layer_cnn = layer_cnn
-        self.layer_gnn = layer_gnn
-        self.window = window
-        self.n_word = n_word
-
-
         self.embed_fingerprint = nn.Embedding(n_fingerprint, dim)
         self.embed_word = nn.Embedding(n_word, dim)
         self.W_gnn = nn.ModuleList([nn.Linear(dim, dim)
@@ -103,10 +94,10 @@ class CompoundProteinInteractionPrediction(nn.Module):
         fingerprints, adjacency, words = data
 
         x_fingerprints = self.embed_fingerprint(fingerprints)
-        x_compound = self.gnn(x_fingerprints, adjacency, self.layer_gnn)
+        x_compound = self.gnn(x_fingerprints, adjacency, layer_gnn)
 
         x_words = self.embed_word(words)
-        x_protein = self.attention_cnn(x_compound, x_words, self.layer_cnn)
+        x_protein = self.attention_cnn(x_compound, x_words, layer_cnn)
 
         y_cat = torch.cat((x_compound, x_protein), 1)
         z_interaction = self.W_out(y_cat)
@@ -116,28 +107,24 @@ class CompoundProteinInteractionPrediction(nn.Module):
 
 
 class Predictor(object):
-    def __init__(self, model, setting):
+    def __init__(self, model):
         """Load the pre-trained model from the directory of output/model."""
         self.model = model
         model.load_state_dict(torch.load('../output/model/' + setting))
 
     def predict(self, dataset, smiles_sequence_list):
+
         z_list, t_list = [], []
         for data in dataset:
             z = self.model(data)
             z_list.append(z[1])
             t_list.append(np.argmax(z))
-        with open('prediction_results.txt', 'w') as f:
+
+        with open('prediction_result.txt', 'w') as f:
             f.write('smiles sequence '
                     'interaction_probability binary_class\n')
             for (c, p), z, t in zip(smiles_sequence_list, z_list, t_list):
                 f.write(' '.join(map(str, [c, p, z, t])) + '\n')
-
-        c = smiles_sequence_list[0]
-        p = smiles_sequence_list[0]
-        z = z_list[0]
-        t = t_list[0]
-        return c,p,z,t
 
 
 def load_dictionary(file_name):
@@ -209,10 +196,8 @@ if __name__ == "__main__":
 
     print('Predictiing CPI...')
 
-    model = CompoundProteinInteractionPrediction(
-        n_fingerprint, dim, layer_gnn, window,layer_cnn
-    ).to(device)
-    predictor = Predictor(model, setting)
+    model = CompoundProteinInteractionPrediction().to(device)
+    predictor = Predictor(model)
 
     start = timeit.default_timer()
     predictor.predict(dataset, smiles_sequence_list)
