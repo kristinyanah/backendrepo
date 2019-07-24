@@ -1,0 +1,74 @@
+<div style="max-width: 1100px;"
+ class="form_center ">
+
+    <div class="w3-margin-top w3-white w3-container">
+
+        <form action="" method="POST">
+
+
+            {{ form.hidden_tag() }}
+            <br />
+
+
+            <div class="w3-row-padding primary_color">
+
+                <div class="w3-third">
+                    {{ form.smiles.label(class="form_label w3-xxlarge") }}
+                    <br/>
+                    {{ form.smiles( **{'style' : 'width:100%' , 'rows':'20'}) }}
+
+                    {% for error in form.smiles.errors %}
+                    <p class="w3-text-red">
+                        {{ error }}
+                    </p>
+                    {% endfor %}
+                </div>
+
+                <div class="w3-third">
+                    {{ form.substrate.label(class="form_label w3-xxlarge") }}
+                    <br/>
+                    {{ form.substrate( **{'style' : 'width:100%' , 'rows':'20'}) }}
+
+                    {% for error in form.substrate.errors %}
+                    <p class="w3-text-red">
+                        {{ error }}
+                    </p>
+                    {% endfor %}
+                </div>
+
+
+                <div class="form-group w3-third">
+                    {{ form.interaction.label(class="form_label w3-xxlarge") }}
+                    {{ form.interaction( **{'class': 'form-control1
+                                selectpicker','data-live-search':'true','data-style':'form-control'} ) }}
+
+                                <br/>
+
+                                <p class="w3-large">
+                                    *Select either "0" or "1"
+                                </p>
+                    {% for error in form.interaction.errors %}
+                    <p class="w3-text-red">
+                        {{ error }}
+                    </p>
+                    {% endfor %}
+
+                </div>
+
+
+            </div>
+            <div class="w3-center ">
+                <br/>
+                {{ form.submit(class=" w3-border w3-button w3-round-xxlarge w3-blue w3-padding w3-xlarge"
+                                 
+                )}}
+
+            </div>
+
+
+        </form>
+
+        <br />
+    </div>
+
+</div>

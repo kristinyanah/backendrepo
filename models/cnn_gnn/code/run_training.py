@@ -85,6 +85,27 @@ class CompoundProteinInteractionPrediction(nn.Module):
             return z, t
 
 
+class Predictor(object):
+    def __init__(self, model):
+        """Load the pre-trained model from the directory of output/model."""
+        self.model = model
+        model.load_state_dict(torch.load('../output/model/' + setting))
+
+    def predict(self, dataset, smiles_sequence_list):
+
+        z_list, t_list = [], []
+        for data in dataset:
+            z = self.model(data)
+            z_list.append(z[1])
+            t_list.append(np.argmax(z))
+
+        with open('prediction_result.txt', 'w') as f:
+            f.write('smiles sequence '
+                    'interaction_probability binary_class\n')
+            for (c, p), z, t in zip(smiles_sequence_list, z_list, t_list):
+                f.write(' '.join(map(str, [c, p, z, t])) + '\n')
+
+
 class Trainer(object):
     def __init__(self, model):
         self.model = model
@@ -267,7 +288,7 @@ def create_dataset(dir_input, training_ratio=0.80, validation_ratio=0.10, test_r
 
     NOTE: ratios must add up to 1.0
 
-    :param dir_input: Path to preprocessed input data folder; created in preprocess_data.py
+    :param dir_input: Path to preprocessed input data folder; created in Preprocess_data.py
     :param training_ratio: Proportion of dataset (0.0-1.0) that should be used for training.
     :param validation_ratio: Proportion of dataset (0.0-1.0) that should be used for validation
     :param test_ratio: Proportion of dataset (0.0-1.0) that should be used for testing

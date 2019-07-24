@@ -15,7 +15,7 @@ def create_atoms(mol):
 
 
 if __name__ == "__main__":
-    with open('../dataset/soha_new_neg/original/'
+    with open('../dataset/_new_neg/original/'
                                         'composite_pos_neg_interactions.txt', 'r') as f:
         cpi_list = f.read().strip().split('\n')
 
